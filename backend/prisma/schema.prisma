@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("API_DATABASE_URL")
+}
+
+model Employee {
+  id          Int        @id @default(autoincrement())
+  externalId  Int?       @unique
+  firstName   String
+  lastName    String
+  email       String     @unique
+  password    String?
+  birthDate   DateTime
+  gender      String
+  role        String
+  phoneNumber String
+  customers   Customer[]
+  events      Event[]
+  blogs       Blog[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  disabled    Boolean    @default(false)
+}
+
+model Customer {
+  id               Int             @id @default(autoincrement())
+  externalId       Int?            @unique
+  firstName        String
+  lastName         String
+  email            String          @unique
+  birthDate        DateTime
+  gender           String
+  description      String
+  phoneNumber      String
+  address          String
+  astrologicalSign String
+  coach            Employee?       @relation(fields: [coachId], references: [id])
+  coachId          Int?
+  encounters       Encounter[]
+  payments         PaymentRecord[]
+  clothes          Clothe[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model Encounter {
+  id         Int      @id @default(autoincrement())
+  externalId Int?     @unique
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId Int
+  date       DateTime
+  rating     Int
+  comment    String
+  source     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Event {
+  id              Int      @id @default(autoincrement())
+  externalId      Int?     @unique
+  name            String
+  date            DateTime
+  duration        Int
+  maxParticipants Int
+  locationX       Float
+  locationY       Float
+  type            String
+  employee        Employee @relation(fields: [employeeId], references: [id])
+  employeeId      Int
+  location        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PaymentRecord {
+  id            Int      @id @default(autoincrement())
+  externalId    Int?     @unique
+  customer      Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId    Int
+  date          DateTime
+  amount        Float
+  comment       String
+  paymentMethod String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Tip {
+  id         Int      @id @default(autoincrement())
+  externalId Int?     @unique
+  title      String
+  tip        String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Clothe {
+  id         Int      @id @default(autoincrement())
+  externalId Int?     @unique
+  type       String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Blog {
+  id        Int      @id @default(autoincrement())
+  author    Employee @relation(fields: [authorId], references: [id])
+  authorId  Int
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tags      String[]
+}

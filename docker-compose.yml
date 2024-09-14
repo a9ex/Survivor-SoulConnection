@@ -1,0 +1,30 @@
+services:
+  database:
+    image: postgres:latest
+    env_file: .env.database
+    restart: unless-stopped
+    volumes:
+      - database:/var/lib/postgresql/data
+
+  front:
+    build:
+      context: ./frontend
+    ports:
+      - 3000:3000
+    env_file: .env.front
+    depends_on:
+      - database
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - 8000:3333
+    env_file: .env.backend
+    depends_on:
+      - database
+
+volumes:
+  database:
+    driver: local

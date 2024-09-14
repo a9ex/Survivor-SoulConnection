@@ -1,0 +1,13 @@
+services:
+  database:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database:
+    driver: local

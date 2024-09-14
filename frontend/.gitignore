@@ -1,0 +1,10 @@
+# NodeJS
+/node_modules
+
+# NextJS
+/.next
+/next-env.d.ts
+
+# Environment
+/.env*
+!/.env.example
